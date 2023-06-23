@@ -87,13 +87,21 @@ async function editProfile(req, res) {
       user = await UserModel.findById(userId);
       if (user === null) {
         return res
-          .status(404)
-          .send({ success: false, message: "No se han encontrado usuario" });
+          .status(500)
+          .json({
+            success: false,
+            message: "No se pudieron actualizar los datos, error de backend.",
+            error: err.message,
+          });
       }
     } catch (err) {
       return res
-        .status(404)
-        .send({ success: false, message: "No se han encontrado usuario" });
+        .status(500)
+        .json({
+          success: false,
+          message: "No se pudieron actualizar los datos, error de backend.",
+          error: err.message,
+        });
     }
     const { description, picture, banner } = req.body;
     const updateFields = {};
