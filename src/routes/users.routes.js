@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createUser, getUsers, login } from '../controllers/user.controller.js';
-import { getMessagesByUserId } from '../controllers/message.controller.js';
+import { getMessagesByUserId } from '../controllers/publication.controller.js';
 
 const router = Router();
 
