@@ -1,42 +1,35 @@
-import MessageModel from "../models/posts.model.js";
+import PostModel from "../models/posts.model.js";
 
 async function createPosts(req, res) {
     try {
         
-        const userId = req.body.userId;
-        const message = req.body.message;
-        
-        if (!userId) {
-            return res.status(400).json({ success: false, message: 'Falta el campo userId' });
-          }
-        if (!message) {
-            return res.status(400).json({ success: false, message: 'Falta el campo message' });
-        }
-        
-      const messageCreated = await MessageModel.create({ userId: userId, message: message });
-      return res.status(200).json({ success: true, message: messageCreated});
+      const postCreated = await PostModel.create(req.body);
+
+      if(!postCreated.userId || !postCreated.title || !postCreated.body_text){
+        return res.status(400).send("Faltan campos obligatorios por completar.")
+      }
+
+      return res.json(postCreated);
     } catch (err) {
-        return res.status(500).json({ success: false, message: 'Error al crear el mensaje', error: err.message });
+        return res.status(500).json({ message: 'No se pudieron enviar los datos, error de backend', error: err.message });
     }
   }
 
   async function deletePostsById(req, res) {
     try {
-      const messageId = req.params.messageId;
-      const message = await MessageModel.deleteOne({ _id: messageId });
-      return res.status(204).send({message: message});
+      const postId = req.params.post_id;
+      const message = await PostModel.deleteOne({ _id: postId });
+      return res.send({message: message});
     } catch (err) {
       return res.status(500).send(err);
     }
   }
 
 
-
   //este ta en user router
-  async function getPostsByUserId(req, res) {
-    const userId = req.params.userId;
-    const messages = await MessageModel.find({ userId: userId});
-    return res.send({ messages });
+  async function getPosts(req, res) {
+    const post = await PostModel.find({});
+    return res.send(post);
   }
 
-  export { createPosts, deletePostsById, getPostsByUserId };
+  export { createPosts, deletePostsById, getPosts };
