@@ -63,6 +63,16 @@ async function createUser(req, res) {
     }
   }
 
-
-
-  export { createUser, getUsers, login };
+  async function editProfile(req, res){
+    try {
+      const userId = req.body.userId;
+      const description = req.body.description;
+      const picture = req.body.picture;
+      const banner = req.body.banner;
+      const userProfile = await UserProfileModel.updateOne({ _id: userId }, { description, picture, banner });
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ success: false, message: 'No se pudieron actualizar los datos, error de backend.', error: err.message });
+    }
+  }
+  export { createUser, getUsers, login, editProfile };
