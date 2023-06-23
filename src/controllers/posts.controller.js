@@ -1,6 +1,6 @@
-import MessageModel from "../models/message.model.js";
+import MessageModel from "../models/posts.model.js";
 
-async function createMessage(req, res) {
+async function createPosts(req, res) {
     try {
         
         const userId = req.body.userId;
@@ -20,7 +20,7 @@ async function createMessage(req, res) {
     }
   }
 
-  async function deleteMessageById(req, res) {
+  async function deletePostsById(req, res) {
     try {
       const messageId = req.params.messageId;
       const message = await MessageModel.deleteOne({ _id: messageId });
@@ -30,10 +30,13 @@ async function createMessage(req, res) {
     }
   }
 
-  async function getMessagesByUserId(req, res) {
+
+
+  //este ta en user router
+  async function getPostsByUserId(req, res) {
     const userId = req.params.userId;
     const messages = await MessageModel.find({ userId: userId});
     return res.send({ messages });
   }
 
-  export { createMessage, deleteMessageById, getMessagesByUserId };
+  export { createPosts, deletePostsById, getPostsByUserId };

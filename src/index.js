@@ -1,21 +1,15 @@
 import express from 'express';
 import { router as userRouter } from './routes/users.routes.js';
-import { router as messageRouter } from './routes/messages.routes.js';
+import { router as postRouter } from './routes/posts.routes.js';
 import connect from './configs/mongo.js';
 
 const app = express();
 
 app.use(express.json());
 
-app.use('/messages', messageRouter);
+app.use('/post', postRouter);
 app.use('', userRouter);
 
-app.get('/', function Description(req,res) {
-    const student = {
-        name : 'Cristóbal Matus'
-    }
-    res.send({ student })
-});
 
 console.log('Connecting to database...');
 connect()
