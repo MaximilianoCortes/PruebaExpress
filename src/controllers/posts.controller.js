@@ -17,6 +17,9 @@ async function createPost(req, res) {
 
      try{
       exist = await UserModel.findById(userId)
+      if(exist===null){
+        return res.status(404).send( {success:false , message:"No se han encontrado usuario"})
+      }
      }catch(err){
       return res.status(404).send( {success:false , message:"No se han encontrado usuarios"})
      }
