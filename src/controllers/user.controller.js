@@ -11,32 +11,32 @@ async function createUser(req, res) {
         const encryptedPassword = bcrypt.hashSync(password, 10);
 
         if (!name) {
-            res.status(400).json({ success: false, message: 'Falta el campo "name"' });
+            return res.status(400).json({ success: false, message: 'Falta el campo name' });
           }
         if (!email) {
-            res.status(400).json({ success: false, message: 'Falta el campo "email"' });
+            return res.status(400).json({ success: false, message: 'Falta el campo email' });
         }
         if (!dni) {
-            res.status(400).json({ success: false, message: 'Falta el campo "dni"' });
+            return res.status(400).json({ success: false, message: 'Falta el campo dni' });
         }
         if (!password) {
-            res.status(400).json({ success: false, message: 'Falta el campo "password"' });
+            return res.status(400).json({ success: false, message: 'Falta el campo password' });
         }
 
 
       const userCreated = await UserModel.create({ name: name, email: email, dni: dni, password: encryptedPassword});
-      res.status(200).json({ success: true, user: userCreated });
+      return res.status(200).json({ success: true, user: userCreated });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Error al crear el usuario', error: err.message });
+        return res.status(500).json({ success: false, message: 'Error al crear el usuario', error: err.message });
     }
   }
 
   async function getUsers(req, res) {
     try {
       const users = await UserModel.find({});
-      res.send(users);
+      return res.send(users);
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Error al obtener usuarios', error: err.message });
+        return res.status(500).json({ success: false, message: 'Error al obtener usuarios', error: err.message });
     }
   }
 
@@ -45,7 +45,7 @@ async function createUser(req, res) {
       const email = req.body.email;
 
       if (!email) {
-        res.status(400).json({ logged: false, message: 'Falta el campo "email"' });
+        return res.status(400).json({ logged: false, message: 'Falta el campo email' });
     }
     
     const user = await UserModel.findOne({ email: email });
@@ -54,13 +54,13 @@ async function createUser(req, res) {
     const isMatch = await bcrypt.compare(password, encryptedPassword);
 
     if (isMatch === false ){
-        res.status(400).json({ logged: false, message: 'Contraseña incorrecta' });
+        return res.status(400).json({ logged: false, message: 'Credenciales incorrectas' });
     } else {
-      res.status(200).json({ logged: true, message: 'Contraseña correcta' });
+      return res.status(200).json({ logged: true, message: 'Credenciales correctas' });
     }
     
     }catch (err) {
-      res.status(500).json({ logged: false, message: 'Error de login', error: err.message });
+      return res.status(500).json({ logged: false, message: 'Error de login', error: err.message });
     }
   }
 
