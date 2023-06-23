@@ -7,7 +7,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/post', postRouter);
+app.use('', postRouter);
 app.use('', userRouter);
 
 

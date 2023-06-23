@@ -8,15 +8,14 @@ const userProfileSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: false,
+
     },
     picture: {
         type: String,
-        required: false,
+
     },
     banner: {
         type: String,
-        required: false,
     },
   },
   { timestamps: true }

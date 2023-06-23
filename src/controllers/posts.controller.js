@@ -1,21 +1,33 @@
 import PostModel from "../models/posts.model.js";
+import UserModel from "../models/user.model.js";
 
-async function createPosts(req, res) {
+
+async function createPost(req, res) {
     try {
-        
-      const postCreated = await PostModel.create(req.body);
+      
+      var exist
 
-      if(!postCreated.userId || !postCreated.title || !postCreated.body_text){
-        return res.status(400).send("Faltan campos obligatorios por completar.")
+      if(!req.body.userId || !req.body.title || !req.body.body_text || req.body.likes){
+        return res.status(400).send({success:false, message:"Faltan campos obligatorios por completar."})
       }
 
-      return res.json(postCreated);
+    const postCreated = await PostModel.create(req.body);
+
+     const userId=postCreated.userId;
+
+     try{
+      exist = await UserModel.findById(userId)
+     }catch(err){
+      return res.status(404).send( {success:false , message:"No se han encontrado usuarios"})
+     }
+   
+      return res.json({success:true ,postCreated});
     } catch (err) {
-        return res.status(500).json({ message: 'No se pudieron enviar los datos, error de backend', error: err.message });
+        return res.status(500).json({success:false ,message: 'No se pudieron enviar los datos, error de backend', error: err.message });
     }
   }
 
-  async function deletePostsById(req, res) {
+  async function deletePostById(req, res) {
     try {
       const postId = req.params.post_id;
       const message = await PostModel.deleteOne({ _id: postId });
@@ -27,9 +39,15 @@ async function createPosts(req, res) {
 
 
   //este ta en user router
-  async function getPosts(req, res) {
-    const post = await PostModel.find({});
-    return res.send(post);
+  async function allPosts(req, res) {
+    try {
+      const post = await PostModel.find({});
+
+      return res.send(post);
+    } catch (err) {
+      return res.status(500).send({message:"No se pudieron obtener, error de backend"});
+    }
+
   }
 
-  export { createPosts, deletePostsById, getPosts };
+  export { createPost, deletePostById, allPosts };
