@@ -80,6 +80,36 @@ async function getUserById(req, res) {
   }
 }
 
+async function getProfileByUserId(req, res) {
+  try {
+    const userId = req.params.userId;
+    let profile;
+    try {
+      profile = await UserProfileModel.findOne({userId: userId});
+      if (profile === null) {
+        return res
+          .status(404)
+          .send({ success: false, message: "No se ha encontrado el perfil del usuario" });
+      }
+    } catch (err) {
+      return res
+        .status(404)
+        .send({ success: false, message: "No se ha encontrado el perfil del usuario" });
+    }
+
+    return res.send(profile);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "No se pudieron obtener los datos, error de backend.",
+        error: err.message,
+      });
+  }
+}
+
+
 async function editProfile(req, res) {
   try {
     const userId = req.params.userId;
@@ -121,4 +151,4 @@ async function editProfile(req, res) {
   }
 }
 
-export { createUser, getUsers, editProfile, getUserById };
+export { createUser, getUsers, editProfile, getUserById, getProfileByUserId};
