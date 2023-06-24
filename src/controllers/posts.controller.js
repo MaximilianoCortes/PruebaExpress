@@ -41,7 +41,6 @@ async function createPost(req, res) {
   }
 
 
-  //este ta en user router
   async function allPosts(req, res) {
     try {
       const post = await PostModel.find({});
