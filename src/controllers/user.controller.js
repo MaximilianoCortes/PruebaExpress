@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import UserModel from "../models/user.model.js";
 import UserProfileModel from "../models/userprofile.model.js";
+import { generateToken, verifyToken } from "../utils/jwt.utils.js";
 
-async function createUser(req, res) {
+async function register(req, res) {
   try {
     const name = req.body.name;
     const email = req.body.email;
@@ -17,14 +18,12 @@ async function createUser(req, res) {
     }
     const encryptedPassword = bcrypt.hashSync(password, 10);
 
-    const userCreated = await UserModel.create({
-      name: name,
-      email: email,
-      password: encryptedPassword,
+    const user = await UserModel.create({
+      ...req.body, password: encryptedPassword
     });
-    const userCreatedId = userCreated._id;
+    const userCreatedId = user._id;
     await UserProfileModel.create({ userId: userCreatedId });
-    return res.status(200).json({ success: true, user: userCreated });
+    return res.status(200).json({ success: true, user: user });
   } catch (err) {
     return res
       .status(500)
@@ -36,27 +35,31 @@ async function createUser(req, res) {
   }
 }
 
-async function getUsers(req, res) {
-  try {
-    const users = await UserModel.find({});
-    return res.send(users);
-  } catch (err) {
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Error al obtener usuarios",
-        error: err.message,
-      });
+async function login(req,res){
+  const user = await UserModel.findOne({email:req.body.email})
+  .select('+password')
+  .exec();
+
+  if(!user){
+    return res.status(404).send({error: "Email incorrecto"})
   }
+  const isCorrect = await bcrypt.compare(req.body.password, user.password);
+  if(!isCorrect){
+    return res.status(400).send({error: "Contraseña incorrecta"})
+  }
+
+  const token = generateToken(user)
+
+    return res.status(200).send({ user, token })
+  
+
 }
 
 async function getUserById(req, res) {
   try {
     var user;
-    const userId = req.params.userId;
     try {
-      user = await UserModel.findById(userId);
+      user = await UserModel.findById(req.id);
       if (user === null) {
         return res
           .status(404)
@@ -79,6 +82,28 @@ async function getUserById(req, res) {
       });
   }
 }
+
+
+
+
+
+async function getUsers(req, res) {
+  
+  try {
+    const users = await UserModel.find({});
+    return res.send(users);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Error al obtener usuarios",
+        error: err.message,
+      });
+  }
+}
+
+
 
 async function getProfileByUserId(req, res) {
   try {
@@ -151,4 +176,4 @@ async function editProfile(req, res) {
   }
 }
 
-export { createUser, getUsers, editProfile, getUserById, getProfileByUserId};
+export { login, register, getUsers, editProfile, getUserById, getProfileByUserId};
