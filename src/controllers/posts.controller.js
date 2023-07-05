@@ -56,9 +56,9 @@ async function createPost(req, res) {
   async function getPostById(req, res) {
     try {
 
-      const post = await PostModel.findById(req.body.post_id)
+      const post = await PostModel.findById(req.params.post_id)
 
-      return res.status(200).send(post);
+      return res.status(200).send({post});
     } catch (err) {
       return res.status(500).send({success:false,message:"No se pudieron obtener, error de backend"});
     }

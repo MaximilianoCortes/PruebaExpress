@@ -8,7 +8,7 @@ router.post('/new_post',checkToken, createPost);
 router.delete('/:post_id',checkToken, deletePostById);
 router.get('/all_posts', checkToken,allPosts );
 router.put('/like',checkToken, reaction );
-router.get('/getPost',checkToken, getPostById );
+router.get('/getPost/:post_id',checkToken, getPostById );
 
 
 export { router };
