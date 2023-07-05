@@ -7,7 +7,7 @@ async function checkToken(req, res, next){
 
     if(!token){
         return res.status(403).send({
-            error: 'Token is required'
+            error: 'Se requiere Token'
         });
     }
     const tokenWithoutBearer = token.split('Bearer ')[1]
@@ -20,7 +20,7 @@ async function checkToken(req, res, next){
     } catch (error) {
         console.log(req.user)
         return res.status(403).send({
-            error: 'tok invalid',
+            error: 'Token inválido o expirado',
         });
     }
 }
