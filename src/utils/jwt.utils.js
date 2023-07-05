@@ -5,8 +5,7 @@ const { SECRET } = environments;
 
 function generateToken(user){
     const{ _id, email} = user;
-    return jsonwebtoken.sign({ id: _id, email}, SECRET, {expiresIn: '50m'})
-    
+    return jsonwebtoken.sign({ id: _id, email}, SECRET, {expiresIn: '50m'})    
 }
 
 function verifyToken(token){

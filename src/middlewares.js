@@ -23,21 +23,18 @@ async function checkToken(req, res, next){
             error: 'tok invalid',
         });
     }
-
-
 }
 
+// function isAdmin(role){
+//     return function (req, res, next){
+//         if(!req.user.isAdmin){
+//             return res.status(401).send({
+//                 error:'usuario no es admin'
+//             });
+//         }
+//         next();
+//     }
 
-function isAdmin(role){
-    return function (req, res, next){
-        if(!req.user.isAdmin){
-            return res.status(401).send({
-                error:'usuario no es admin'
-            });
-        }
-        next();
-    }
+// }
 
-}
-
-export { checkToken,  isAdmin }
+export { checkToken,}

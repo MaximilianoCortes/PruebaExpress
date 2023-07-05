@@ -5,24 +5,11 @@ import UserModel from "../models/user.model.js";
 async function createPost(req, res) {
     try {
       
-      var exist
-
-      if(!req.body.userId || !req.body.title || !req.body.body_text || req.body.likes){
+      if(!req.body.title || !req.body.body_text || req.body.likes){
         return res.status(400).send({success:false, message:"Faltan campos obligatorios por completar."})
       }
 
-    const postCreated = await PostModel.create(req.body);
-
-     const userId=postCreated.userId;
-
-     try{
-      exist = await UserModel.findById(userId)
-      if(exist===null){
-        return res.status(404).send( {success:false , message:"No se han encontrado usuario"})
-      }
-     }catch(err){
-      return res.status(404).send( {success:false , message:"No se han encontrado usuarios"})
-     }
+     const postCreated = await PostModel.create({...req.body, userId : req.user._id, likes:0});
    
       return res.json({success:true ,postCreated});
     } catch (err) {
@@ -49,7 +36,21 @@ async function createPost(req, res) {
     } catch (err) {
       return res.status(500).send({message:"No se pudieron obtener, error de backend"});
     }
-
   }
 
-  export { createPost, deletePostById, allPosts };
+  async function reaction(req, res) {
+    try {
+
+   const post = await PostModel.findById(req.body.post_id)
+   console.log(post.likes)
+   const updatedLikePost= post.likes + req.body.reaction
+
+   await PostModel.updateOne({_id:req.body.post_id},{likes:updatedLikePost})
+
+      return res.status(200).send({success:true});
+    } catch (err) {
+      return res.status(500).send({success:false,message:"No se pudieron obtener, error de backend"});
+    }
+  }
+
+  export { createPost, deletePostById, allPosts ,reaction};
