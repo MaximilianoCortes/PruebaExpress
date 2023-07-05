@@ -45,46 +45,83 @@ async function createReport(req, res) {
 
 async function banUserPERMANENTLY(req, res) {
     try {
-      if (!req.body.id) {
+      if (!req.params.user_id) {
         return res.status(400).send({
           success: false,
           message: "Faltan campos obligatorios por completar.",
         });
       }
   
-      const exist = await UserModel.findById(req.body.id);
+      const exist = await UserModel.findById(req.params.user_id);
       if (!exist) {
         return res.status(404).send({ success: false, message: "No se ha encontrado el usuario." });
       }
   
-      const postsOfUser = await PostModel.find({ userId: req.body.id });
+      const postsOfUser = await PostModel.find({ userId: req.params.user_id });
   
       await Promise.all(postsOfUser.map(async (post) => {
         await ReportModel.deleteMany({ post_id: post._id });
       }));
   
-      await PostModel.deleteMany({ userId: req.body.id });
-      await UserProfileModel.deleteMany({ userId: req.body.id });
-      await UserModel.findByIdAndDelete(req.body.id);
+      await PostModel.deleteMany({ userId: req.params.user_id });
+      await UserProfileModel.deleteMany({ userId: req.params.user_id });
+      await UserModel.findByIdAndDelete(req.params.user_id);
   
       return res.send({ success: true });
     } catch (err) {
       return res.status(500).send({ success: false, message: "No se pudieron obtener los datos, error de backend." });
     }
   }
-  
-  
 
-async function allReport(req, res) {
-  try {
-    const report = await ReportModel.find({});
+  async function dismissReport(req, res) {
+    try {
+      if (!req.params.report_id) {
+        return res.status(400).send({
+          success: false,
+          message: "Id Invalido",
+        });
+      }
 
-    return res.send(report);
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ message: "No se pudieron obtener, error de backend" });
+      await ReportModel.findByIdAndDelete(req.params.report_id);
+ 
+  
+      return res.send({ success: true });
+    } catch (err) {
+      return res.status(500).send({ success: false, message: "No se pudieron obtener los datos, error de backend." });
+    }
   }
-}
 
-export { createReport, banUserPERMANENTLY, allReport };
+  async function allReportUsers(req, res) {
+    try {
+      const reportedPosts = await ReportModel.find({});
+      const postIds = reportedPosts.map(report => report.post_id);
+      const postReported = await PostModel.find({_id: {$in: postIds}});
+      const userIds = postReported.map(post => post.userId);
+      const users = await UserModel.find({_id: {$in: userIds}});
+  
+      return res.send(users);
+    } catch (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .send({ message: "No se pudieron obtener los usuarios reportados, error del servidor" });
+    }
+  }
+  
+
+  async function allReport(req, res) {
+    try {
+      const uniquePostIds = await ReportModel.distinct("post_id");
+      const reports = await ReportModel.find({ post_id: { $in: uniquePostIds } });
+  
+      return res.send(reports);
+    } catch (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .send({ message: "No se pudieron obtener los reportes, error del servidor" });
+    }
+  }
+  
+
+export { createReport, banUserPERMANENTLY, allReport,allReportUsers ,dismissReport};

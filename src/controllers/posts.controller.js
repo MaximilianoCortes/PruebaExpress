@@ -1,4 +1,5 @@
 import PostModel from "../models/posts.model.js";
+import ReportModel from "../models/report.model.js";
 
 
 async function createPost(req, res) {
@@ -19,13 +20,13 @@ async function createPost(req, res) {
   async function deletePostById(req, res) {
     try {
       const postId = req.params.post_id;
+      await ReportModel.deleteOne({post_id: postId})
       const message = await PostModel.deleteOne({ _id: postId });
       return res.send({message: message});
     } catch (err) {
       return res.status(500).send(err);
     }
   }
-
 
   async function allPosts(req, res) {
     try {
@@ -52,4 +53,15 @@ async function createPost(req, res) {
     }
   }
 
-  export { createPost, deletePostById, allPosts ,reaction};
+  async function getPostById(req, res) {
+    try {
+
+      const post = await PostModel.findById(req.body.post_id)
+
+      return res.status(200).send(post);
+    } catch (err) {
+      return res.status(500).send({success:false,message:"No se pudieron obtener, error de backend"});
+    }
+  }
+
+  export { createPost, deletePostById, allPosts ,reaction,getPostById};
