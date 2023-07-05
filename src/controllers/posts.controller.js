@@ -1,5 +1,4 @@
 import PostModel from "../models/posts.model.js";
-import UserModel from "../models/user.model.js";
 
 
 async function createPost(req, res) {

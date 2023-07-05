@@ -59,7 +59,7 @@ async function login(req, res) {
   return res.status(200).send({ user, token });
 }
 
-async function getUserById(req, res) {
+async function getUserCurrent(req, res) {
   try {
     var user;
     try {
@@ -84,6 +84,37 @@ async function getUserById(req, res) {
     });
   }
 }
+
+
+async function getUserById(req, res) {
+
+  let userId
+
+  try {
+    try {
+       userId = req.params.userId;
+      if (userId === null) {
+        return res
+          .status(404)
+          .send({ success: false, message: "No se han encontrado usuario" });
+      }
+    } catch (err) {
+      return res
+        .status(404)
+        .send({ success: false, message: "No se han encontrado usuario" });
+    }
+    const usuario = await UserModel.findById(req.params.userId) 
+
+    return res.send(usuario);
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "No se pudieron obtener los datos, error de backend.",
+      error: err.message,
+    });
+  }
+}
+
 
 async function getUsers(req, res) {
   try {
@@ -165,6 +196,7 @@ export {
   register,
   getUsers,
   editProfile,
+  getUserCurrent,
   getUserById,
   getProfileByUserId,
 };

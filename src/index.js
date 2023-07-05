@@ -3,14 +3,17 @@ import { router as userRouter } from './routes/users.routes.js';
 import { router as postRouter } from './routes/posts.routes.js';
 import { router as reportRouter } from './routes/report.routes.js';
 import connect from './configs/mongo.js';
+import cors from 'cors'
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.use('', postRouter);
 app.use('', userRouter);
 app.use('',reportRouter)
+
 
 console.log('Connecting to database...');
 connect()
