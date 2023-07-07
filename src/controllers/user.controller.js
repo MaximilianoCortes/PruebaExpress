@@ -47,11 +47,11 @@ async function login(req, res) {
   }
 
   if (!user) {
-    return res.status(400).send({ error: "Credenciales inválidas tontito" });
+    return res.status(400).send({ error: "Credenciales inválidas" });
   }
   const isCorrect = await bcrypt.compare(req.body.password, user.password);
   if (!isCorrect) {
-    return res.status(400).send({ error: "Credenciales inválidas tontito" });
+    return res.status(400).send({ error: "Credenciales inválidas" });
   }
 
   const token = generateToken(user);
