@@ -25,16 +25,17 @@ async function checkToken(req, res, next){
     }
 }
 
-// function isAdmin(role){
-//     return function (req, res, next){
-//         if(!req.user.isAdmin){
-//             return res.status(401).send({
-//                 error:'usuario no es admin'
-//             });
-//         }
-//         next();
-//     }
+function isAdmin(role){
+    return async function (req, res, next){
+        const {roles} = await UserModel.findById(req.user._id).exec();
+        if(!roles.includes(role)){
+            return res.status(401).send({
+                error:'usuario no es admin'
+            });
+        }
+        next();
+    }
 
-// }
+}
 
-export { checkToken,}
+export { checkToken,isAdmin}

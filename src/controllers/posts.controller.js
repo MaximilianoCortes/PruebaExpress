@@ -56,7 +56,7 @@ async function createPost(req, res) {
   async function getPostById(req, res) {
     try {
 
-      const post = await PostModel.findById(req.params.post_id)
+      const post = await PostModel.findById(req.body.post_id)
 
       return res.status(200).send({post});
     } catch (err) {
@@ -64,4 +64,17 @@ async function createPost(req, res) {
     }
   }
 
-  export { createPost, deletePostById, allPosts ,reaction,getPostById};
+
+
+  async function getPostsByUser(req, res) {
+    try {
+
+      const posts = await PostModel.find({userId:req.body.user_id})
+
+      return res.status(200).send({posts});
+    } catch (err) {
+      return res.status(500).send({success:false,message:"No se pudieron obtener, error de backend"});
+    }
+  }
+
+  export { createPost, deletePostById, allPosts ,reaction,getPostById,getPostsByUser};

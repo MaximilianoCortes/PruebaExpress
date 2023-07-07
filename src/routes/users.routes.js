@@ -10,6 +10,6 @@ router.get('/users',checkToken, getUsers)
 router.put('/edit_profile',checkToken, editProfile)
 router.get('/:userId/user', checkToken, getUserById)
 router.get('/current', checkToken, getUserCurrent)
-router.get('/:userId/profile',checkToken,getProfileByUserId)
+router.get('/profile/:userId',checkToken,getProfileByUserId)
 
 export { router };

@@ -175,12 +175,15 @@ async function editProfile(req, res) {
         error: err.message,
       });
     }
+  
+
     const { description, picture, banner } = req.body;
     const updateFields = {};
     if (description) updateFields.description = description;
     if (picture) updateFields.picture = picture;
     if (banner) updateFields.banner = banner;
-    await UserProfileModel.updateOne({ userId: req.user._id }, updateFields);
+    await UserProfileModel.updateOne({ userId: req.user._id}, updateFields);
+
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({
